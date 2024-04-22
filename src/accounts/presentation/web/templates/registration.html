@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Sign Up{% endblock title %}
+{% block static %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
+<link rel="stylesheet" type="text/css" href="{% static "css/accounts/registration.css" %}" type=”image/x-icon”>
+{% endblock static %}
+{% block main %}
+<section class="content">
+    <a class="content__logo" id="logo" href="/">
+        <img 
+          class="content__logo-image"
+          src="{% static "image/jobhub_logo.png" %}"
+          alt="main logo"
+          width="300px"
+          height="303px"
+          loading="lazy"
+        >
+    </a> 
+    <h1 class="visually-hidden">Sign up</h1>
+    <form method="POST" id="register-form">
+        {% csrf_token %}
+        {{ form }}
+        <div id="password-mismatch" style="color: red; display: none;">Passwords don't match</div>
+        <input type="submit" class="button disabled" id="submit-form" value="Sing up">
+    </form>
+</section>
+{% endblock main %}
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        function checkFields() {
+            var email = $('#id_email').val();
+            var userName = $('#id_username').val();
+            var dateOfBirth = $('#id_date_of_birth').val();
+            var password1 = $('#id_password').val();
+            var password2 = $('#id_confirm_password').val();
+            
+            if (email && userName && dateOfBirth && password1 && password2) {
+                $('#submit-form').removeClass('disabled');
+            } else {
+                $('#submit-form').addClass('disabled');
+            }
+        }
+        
+        $('#id_email, #id_username, #id_date_of_birth, #id_password, #id_confirm_password').on('input', checkFields);
+        
+        checkFields();
+    });
+    $(document).ready(function() {
+            $('#id_confirm_password').on('input', function() {
+                var password1 = $('#id_password').val();
+                var password2 = $(this).val();
+                if (password1 != password2) {
+                    $('#password-mismatch').show();
+                    $('#submit-form').addClass('disabled');
+                } else {
+                    $('#password-mismatch').hide();
+                    $('#submit-form').removeClass('disabled');
+                }
+            });
+        });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        {% if success_message %}
+        Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: '{{ success_message }}',
+            timer: 5000,
+            timerProgressBar: true,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            customClass: {
+                popup: 'error-text'
+            }
+        });
+        {% endif %}
+        {% if error_message %}
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: '{{ error_message }}',
+            timer: 5000,
+            timerProgressBar: true,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            customClass: {
+                popup: 'error-text'
+            }
+        });
+        {% endif %}
+    });
+
+</script>
+{% endblock script %}

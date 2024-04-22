@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Log in{% endblock title %}
+{% block static %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
+<link rel="stylesheet" type="text/css" href="{% static "css/accounts/login.css" %}" type=”image/x-icon”>
+{% endblock static %}
+{% block main %}
+<section class="content">
+    <a class="content__logo" id="logo" href="/">
+        <img 
+          class="content__logo-image"
+          src="{% static "image/jobhub_logo.png" %}"
+          alt="main logo"
+          width="300px"
+          height="303px"
+          loading="lazy"
+        >
+    </a>  
+    <h1 class="visually-hidden">Log in</h1>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" id="submit" class="button" value="Log in">
+    </form>
+    <p class="content__text">Don't have an account yet? <a class="content_text-link" href="{% url 'accounts:register' %}">Register now</a></p>
+</section>
+{% endblock main %}
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        {% if error_message %}
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: '{{ error_message }}',
+            timer: 5000,
+            timerProgressBar: true,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            customClass: {
+                popup: 'error-text'
+            }
+        });
+        {% endif %}
+    });
+</script>
+{% endblock script %}

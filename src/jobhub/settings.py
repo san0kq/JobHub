@@ -113,6 +113,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = "accounts.User"
+AUTHENTICATION_BACKENDS = ['accounts.backends.EmailOrUsernameModelBackend']
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -124,6 +126,22 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+
+# Send email settings
+
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool)
+EMAIL_FROM = config('EMAIL_FROM', default='')
+EMAIL_BACKEND = config('EMAIL_BACKEND', default='')
+EMAIL_REVERSE_URL = config('EMAIL_REVERSE_URL', default='')
+
+SERVER_HOST = config("SERVER_HOST")
+
+CONFIRMATION_CODE_LIFETIME = 600 # 10 minutes
 
 
 # Static files (CSS, JavaScript, Images)
