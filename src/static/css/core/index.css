@@ -1,0 +1,17 @@
+.content {
+    display: flex;
+    flex-direction: row;
+    column-gap: 50px;
+    flex-wrap: wrap;
+    width: 1000px;
+    margin-inline: auto;
+}
+
+
+@media (max-width: 1200px) {
+    .content {
+        width: auto;
+        margin-inline: 50px;
+        row-gap: 100px;
+    }
+}
