@@ -1,0 +1,222 @@
+.content {
+    display: flex;
+    flex-direction: row;
+    column-gap: 20px;
+    width: 1000px;
+    margin-inline: auto;
+    margin-top: 200px;
+}
+
+.content__profile-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 600px;
+    height: 470px;
+
+}
+
+.profile-main__header {
+    display: flex;
+    flex-direction: row;
+    padding-left: 30px;
+    padding-right: 10px;
+    justify-content: space-between;
+    width: 100%;
+    height: 110px;
+}
+
+.header_detail-text {
+    font-size: 30px;
+    font-weight: 700;
+    width: 150px;
+}
+
+.header_profile-edit {
+    width: 155px;
+    display: flex;
+    justify-content: end;
+    align-items: start;
+}
+.header_profile-edit-ico {
+    margin-top: 10px;
+    color: var(--color-dark-gray);
+    width: 40px;
+    height: auto;
+}
+
+.header_profile-edit-ico:hover {
+    color: var(--color-light-gray);
+
+}
+
+.header__avatar {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    position: relative;
+    bottom: 100px;
+    background: linear-gradient(to top, var(--color-light-gray) 0%, var(--color-light-gray) 49%, #f5f5f5 50%, #f5f5f5 100%);
+}
+.border-out {
+    width: 198px;
+    height: 198px;
+    left: 1px;
+    top: 1px;
+    border-radius: 50%;
+    position: absolute;
+    background: #f5f5f5;
+}
+
+.circle-out {
+    width: 178px;
+    height: 178px;
+    left: 9px;
+    top: 9px;
+    border-radius: 50%;
+    position: absolute;
+    background: var(--color-light-gray);
+}
+
+.avatar-image {
+    object-fit: cover;
+    border-radius: 50%;
+    width: 178px;
+    height: 178px;
+    margin: auto;
+    text-align: center;
+}
+
+.content__profile-info-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+    width: 380px;
+    min-width: 360px;
+    height: 700px;
+}
+
+.profile-main__detail {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 40px;
+    padding-inline: 30px;
+}
+
+.detail-email, .detail-username {
+    overflow: hidden;
+    text-overflow: ellipsis;  
+}
+
+.detail-email:active:after, .detail-username:active:after {
+    content: attr(title);
+    position: absolute;
+    background-color: var(--color-light-gray);
+    padding-inline: 5px;
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+.profile-main-fullname {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    max-width: 70%;
+    font-size: 28px;
+    font-weight: 700;
+    align-self: center;
+}
+
+.detail-user-id, .detail-username, .detail-email, .detail-phone{
+    font-size: 20px;
+    margin-bottom: 10px;
+    margin-left: 30px;
+}
+
+.content__profile-info-container h2 {
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+.detail-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 20px;
+    border-bottom: 1px solid var(--color-light-gray);
+}
+
+.detail-column {
+    font-weight: 700;
+}
+
+.container--border {
+    background-color: #fff;
+    border-radius: 10px;
+    border-top: 1px solid var(--color-light-gray);
+    border-left: 1px solid var(--color-light-gray);
+    border-right: 1px solid var(--color-light-gray);
+    box-shadow: 0px 2px 1px 1px var(--color-light-gray);
+}
+
+@media (max-width: 1120px) {
+    .content {
+        width: auto;
+        margin-inline: 60px;
+    }
+}
+
+@media (max-width: 1039px) {
+    .header_detail-text {
+        display: none;
+    }
+}
+
+@media (max-width: 927px) {
+    .content {
+        flex-direction: column;
+        align-items: center;
+        row-gap: 30px;
+        margin-inline: 0;
+    }
+
+    .content__profile-main {
+        width: 380px;
+    }
+    .circle-out {
+        width: 178px;
+        height: 178px;
+        left: 10px;
+        top: 7px;
+    }
+    .border-out {
+        width: 199px;
+        height: 199px;
+        left: 1px;
+        top: 1px;
+    }
+    .header__avatar {
+        width: 228px;
+        height: 201px;
+    }
+}
+
+@media (max-width: 450px) {
+    .content__profile-main,
+    .profile-info-container,
+    .content__profile-info-container {
+        width: 320px;
+    }
+    .content__profile-info-container {
+        align-items: center;
+        min-width: 320px;
+    }
+
+    .header__avatar {
+        width: 410px;
+        height: 201px;
+    }
+}

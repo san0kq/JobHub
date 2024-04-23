@@ -10,8 +10,8 @@ class Client(BaseModel):
         on_delete=models.CASCADE,
         related_name='client',
     )
-    first_name = models.CharField(max_length=150, blank=True)
-    last_name = models.CharField(max_length=150, blank=True)
+    first_name = models.CharField(max_length=150, null=True, blank=True)
+    last_name = models.CharField(max_length=150, null=True, blank=True)
     avatar = models.ImageField(upload_to='avatar/', null=True, blank=True)
     phone = models.CharField(max_length=13, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
@@ -30,8 +30,8 @@ class Freelancer(BaseModel):
         on_delete=models.CASCADE,
         related_name='freelancer',
     )
-    first_name = models.CharField(max_length=150, blank=True)
-    last_name = models.CharField(max_length=150, blank=True)
+    first_name = models.CharField(max_length=150, null=True, blank=True)
+    last_name = models.CharField(max_length=150, null=True, blank=True)
     avatar = models.ImageField(upload_to='avatar/', null=True, blank=True)
     phone = models.CharField(max_length=13, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)

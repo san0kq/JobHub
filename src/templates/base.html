@@ -29,6 +29,10 @@
       </nav>
       <div class="header__action">
         <a class="header__menu-link link link" href="/admin">Admin</a>
+        {% if user.is_authenticated %}
+        |
+        <a class="header__menu-link link link" href="{% url 'accounts:profile' %}">{{ user.username }}</a>
+        {% endif %}
       </div>
     </header>
     <main>

@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Profile{% endblock title %}
+{% block static %}
+<link rel="stylesheet" type="text/css" href="{% static "css/accounts/profile.css" %}" type=”image/x-icon”>
+{% endblock static %}
+{% block main %}
+<section class="content">
+  <h1 class="visually-hidden">Profile</h1>
+  <div class="content__profile-main container--border">
+    <header class="profile-main__header">
+      <h2 class="header_detail-text">My Profile</h2>
+      <div class="header__avatar">
+        <div class="border-out">
+          <div class="circle-out">
+            {% if profile.avatar %}
+              <img src="{{ profile.avatar.url }}" alt="avatar-alt" class="avatar-image">
+            {% else %}
+            <svg class="avatar-image" width="60px" height="60px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+              <path fill="#000000" d="M628.736 528.896A416 416 0 0 1 928 928H96a415.872 415.872 0 0 1 299.264-399.104L512 704l116.736-175.104zM720 304a208 208 0 1 1-416 0 208 208 0 0 1 416 0z"/>
+            </svg>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <a class="header_profile-edit" href="{% url 'accounts:profile_edit' %}">
+        <svg class="header_profile-edit-ico" width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21.2799 6.40005L11.7399 15.94C10.7899 16.89 7.96987 17.33 7.33987 16.7C6.70987 16.07 7.13987 13.25 8.08987 12.3L17.6399 2.75002C17.8754 2.49308 18.1605 2.28654 18.4781 2.14284C18.7956 1.99914 19.139 1.92124 19.4875 1.9139C19.8359 1.90657 20.1823 1.96991 20.5056 2.10012C20.8289 2.23033 21.1225 2.42473 21.3686 2.67153C21.6147 2.91833 21.8083 3.21243 21.9376 3.53609C22.0669 3.85976 22.1294 4.20626 22.1211 4.55471C22.1128 4.90316 22.0339 5.24635 21.8894 5.5635C21.7448 5.88065 21.5375 6.16524 21.2799 6.40005V6.40005Z" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M11 4H6C4.93913 4 3.92178 4.42142 3.17163 5.17157C2.42149 5.92172 2 6.93913 2 8V18C2 19.0609 2.42149 20.0783 3.17163 20.8284C3.92178 21.5786 4.93913 22 6 22H17C19.21 22 20 20.2 20 18V13" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </header>
+    <p class="profile-main-fullname">
+      {{ profile.first_name }} {{ profile.last_name }}
+    </p>
+    <div class="profile-main__detail">
+        <div class="detail-info">
+            <p class="detail-column">Username:</p><p class="detail-username" title="{{ user.username }}">{{ user.username }}</p>
+        </div>
+        <div class="detail-info">
+            <p class="detail-column">Email:</p><p class="detail-email" title="{{ user.email }}">{{ profile.email }}</p>
+        </div>
+        <div class="detail-info">
+            <p class="detail-column">Phone:</p><p class="detail-email" title="{{ user.email }}">+{{ profile.phone }}</p>
+        </div>
+    </div>
+  </div>
+  <div class="content__profile-config">
+    <fieldset>
+      <legend>Select your profile:</legend>
+    
+      <div>
+        {% if profile_type == 'freelancer' %}
+            <input type="radio" id="freelancer" name="profile_type" value="freelancer" checked />
+        {% else %}
+            <input type="radio" id="freelancer" name="profile_type" value="freelancer"/>
+        {% endif %}
+        <label for="freelancer">Freelancer</label>
+      </div>
+    
+      <div>
+        {% if profile_type == 'client' %}
+            <input type="radio" id="client" name="profile_type" value="client" checked />
+        {% else %}
+            <input type="radio" id="client" name="profile_type" value="client"/>
+        {% endif %}
+        <label for="client">Client</label>
+      </div>
+    </fieldset>
+</div>
+</section>
+</div>
+{% endblock main %}
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // var loginLink = document.querySelector('.link-profile');
+    // loginLink.classList.add('is_current');
+    const radioButtons = document.querySelectorAll('input[name="profile_type"]');
+  
+    radioButtons.forEach(radioButton => {
+        radioButton.addEventListener('change', () => {
+        if (radioButton.checked) {
+            const profileType = radioButton.value;
+            updateProfileType(profileType);
+        }
+        });
+    });
+    function updateProfileType(profileType) {
+        fetch('/api/v1/update_profile_type/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ profile_type: profileType })
+        })
+        .then(response => {
+        if (response.ok) {
+            location.reload();
+        }
+        })
+    }
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+    </script>
+{% endblock script %}

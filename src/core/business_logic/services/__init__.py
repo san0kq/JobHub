@@ -6,6 +6,12 @@ from .user import (
     create_user,
     is_user_not_exists
 )
+from .profile import (
+    get_client_profile,
+    get_freelancer_profile,
+    initial_profile_form,
+    profile_edit
+)
 
 __all__ = [
     'authenticate_user',
@@ -14,5 +20,9 @@ __all__ = [
     'create_user',
     'is_user_not_exists',
     'send_confirm_code',
-    'confirm_user_email'
+    'confirm_user_email',
+    'get_freelancer_profile',
+    'get_client_profile',
+    'initial_profile_form',
+    'profile_edit'
 ]

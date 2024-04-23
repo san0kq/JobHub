@@ -15,6 +15,8 @@ import os
 
 from decouple import config
 
+from .logger_formatter import ContextFormatter
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -128,6 +130,39 @@ USE_I18N = True
 USE_TZ = True
 
 
+# Configure logging
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "console_formatter": {
+            "()": ContextFormatter,
+            "format": "{asctime} - {levelname} - {name} - {module}:{funcName}:{lineno} - {message}",
+            "style": "{",
+        }
+    },
+    "handlers": {
+        "console_handler": {
+            "class": "logging.StreamHandler",
+            "level": os.environ.get("LOG_LEVEL", default="INFO"),
+            "formatter": "console_formatter",
+        }
+    },
+    "loggers": {
+        "root": {
+            "level": os.environ.get("LOG_LEVEL", default="INFO"),
+            "handlers": ["console_handler"],
+        },
+        "django": {
+            "level": "INFO",
+            "handlers": ["console_handler"],
+        },
+        "PIL": {"level": "WARNING", "handlers": ["console_handler"]},
+    },
+}
+
+
 # Send email settings
 
 EMAIL_HOST = config('EMAIL_HOST')
@@ -150,6 +185,12 @@ CONFIRMATION_CODE_LIFETIME = 600 # 10 minutes
 STATIC_URL = 'static/'
 # STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
+
+# Media files (Images)
+
+MEDIA_URL = "media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
 # Default primary key field type
