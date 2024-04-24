@@ -138,7 +138,7 @@ LOGGING = {
     "formatters": {
         "console_formatter": {
             "()": ContextFormatter,
-            "format": "{asctime} - {levelname} - {name} - {module}:{funcName}:{lineno} - {message}",
+            "format": "[{asctime}] - {levelname} - {name} - {module}:{funcName}:{lineno} - {message}",
             "style": "{",
         }
     },

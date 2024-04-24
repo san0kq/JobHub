@@ -21,9 +21,16 @@ from core.business_logic.exceptions import (
 
 logger = getLogger(__name__)
 
-def send_confirm_code(user: AbstractBaseUser, email: str) -> None:
+def send_confirm_code(user: AbstractBaseUser, email: str) -> dict[str, bool | int]:
     """
-    Generates and sends a confirmation code for registration or email change to the user's email.
+    Send a confirmation code to the user's email for account verification.
+
+    Args:
+        user (AbstractBaseUser): The user object.
+        email (str): The email address of the user.
+
+    Returns:
+        dict: A dictionary indicating if the code was sent successfully and, if not, the time until the next attempt can be made.
     """
     new_confirmation_code = str(uuid.uuid4())
     code_expiration_time = (
@@ -45,7 +52,6 @@ def send_confirm_code(user: AbstractBaseUser, email: str) -> None:
             + f'?code={new_confirmation_code}'
             + f'&email={email}'
         )
-        print(confirm_url)
 
         template = loader.render_to_string('email/register.txt', {
             'username': user.username,
@@ -75,7 +81,18 @@ def send_confirm_code(user: AbstractBaseUser, email: str) -> None:
 
 def confirm_user_email(confirmation_code: str, email: str) -> AbstractBaseUser:
     """
-    Used to access the database to authenticate the code received by the user via email.
+    Confirm user's email address using the provided confirmation code.
+
+    Args:
+        confirmation_code (str): The confirmation code sent to the user.
+        email (str): The user's email address.
+
+    Returns:
+        AbstractBaseUser: The user object after email confirmation.
+
+    Raises:
+        ConfirmationCodeExpired: If the confirmation code has expired.
+        ConfirmationCodeNotExists: If the provided confirmation code does not exist.
     """
     try:
         code_data = EmailConfirmationCode.objects.get(code=confirmation_code)

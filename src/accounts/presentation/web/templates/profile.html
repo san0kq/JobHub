@@ -38,10 +38,16 @@
             <p class="detail-column">Username:</p><p class="detail-username" title="{{ user.username }}">{{ user.username }}</p>
         </div>
         <div class="detail-info">
-            <p class="detail-column">Email:</p><p class="detail-email" title="{{ user.email }}">{{ profile.email }}</p>
+            <p class="detail-column">Email:</p><p class="detail-email" title="{{ profile.email }}">{{ profile.email }}</p>
         </div>
         <div class="detail-info">
-            <p class="detail-column">Phone:</p><p class="detail-email" title="{{ user.email }}">+{{ profile.phone }}</p>
+            <p class="detail-column">Phone:</p><p class="detail-phone" title="{{ profile.phone }}">+{{ profile.phone }}</p>
+        </div>
+        <div class="detail-info">
+          <p class="detail-column">Telegram:</p><p class="detail-telegram" title="{{ profile.telegram }}"><a href="{{ profile.telegram_link }}">{{ profile.telegram_link|default:"" }}</a></p>
+        </div>
+        <div class="detail-info">
+          <p class="detail-column">LinkedIn:</p><p class="detail-linkedin" title="{{ profile.linkedin }}"><a href="{{ profile.linkedin_link }}">{{ profile.linkedin_link|default:"" }}</a></p>
         </div>
     </div>
   </div>

@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
 from django.views import View
+from django.forms import formset_factory
 
 if TYPE_CHECKING:
     from django.http import HttpResponse, HttpRequest
@@ -16,26 +17,32 @@ from core.business_logic.services import (
     get_client_profile,
     get_freelancer_profile,
     initial_profile_form,
-    profile_edit
+    profile_edit,
+    delete_profile_avatar
 )
 from core.presentation.common import convert_data_from_request_to_dto
 
 
 class ProfileView(LoginRequiredMixin, View):
     """
-    Controller for the profile page.
+    View for displaying user profile information.
 
-    Supports only GET requests.
-
-    This controller handles only the profile of the authenticated
-    user..
-
-    If the user is not authenticated, it redirects to the login page.
+    Methods:
+        - get(request: HttpRequest) -> HttpResponse: Method to handle GET requests for displaying the user profile.
     """
 
-    login_url = "accounts:login"
+    login_url = 'accounts:login'
 
     def get(self, request: HttpRequest) -> HttpResponse:
+        """
+        Handle GET requests for displaying the user profile.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+
+        Returns:
+            HttpResponse: The HTTP response containing the user profile information.
+        """
         profile_type = request.session.get('profile_type')
         user = request.user
         if profile_type == 'client':
@@ -63,13 +70,25 @@ class ProfileView(LoginRequiredMixin, View):
 
 class ProfileEditView(LoginRequiredMixin, View):
     """
-    Controller for editing user profile. Supports both GET and POST requests.
-    If the user is not authenticated, it redirects to the login page.
+    View for editing user profile information.
+
+    Methods:
+        - get(request: HttpRequest) -> HttpResponse: Method to handle GET requests for displaying the profile edit form.
+        - post(request: HttpRequest) -> HttpResponse: Method to handle POST requests for updating user profile.
     """
 
-    login_url = "accounts:login"
+    login_url = 'accounts:login'
 
     def get(self, request: HttpRequest) -> HttpResponse:
+        """
+        Handle GET requests for displaying the profile edit form.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+
+        Returns:
+            HttpResponse: The HTTP response containing the profile edit form.
+        """
         profile_type = request.session.get('profile_type', 'freelancer')
 
         user = request.user
@@ -79,10 +98,23 @@ class ProfileEditView(LoginRequiredMixin, View):
         )
         form = ProfileEditForm(initial=initial_data)
 
-        context = {"form": form, 'profile_type': profile_type}
-        return render(request, "profile_edit.html", context=context)
+        context = {
+            'form': form,
+            'profile_type': profile_type,
+            'avatar': initial_data.get('avatar')
+        }
+        return render(request, 'profile_edit.html', context=context)
 
     def post(self, request: HttpRequest) -> HttpResponse:
+        """
+        Handle POST requests for updating user profile.
+
+        Args:
+            request (HttpRequest): The HTTP request object containing profile update data.
+
+        Returns:
+            HttpResponse: The HTTP response after processing the profile update.
+        """
         profile_type = request.session.get('profile_type', 'freelancer')
 
         user = request.user
@@ -96,21 +128,38 @@ class ProfileEditView(LoginRequiredMixin, View):
             profile_edit(
                 data=data,
                 user=user,
-                profile_type=profile_type    
+                profile_type=profile_type,
             )
       
-            return redirect("accounts:profile")
+            return redirect('accounts:profile')
 
         else:
-            context = {"form": form}
-            return render(request, "profile_edit.html", context=context)
+            context = {'form': form}
+            return render(request, 'profile_edit.html', context=context)
 
 
-# class AvatarDeleteView(LoginRequiredMixin, View):
-#     login_url = "accounts:login"
+class AvatarDeleteView(LoginRequiredMixin, View):
+    """
+    View for deleting user avatar.
 
-#     def get(self, request: HttpRequest) -> HttpResponse:
-#         user = request.user
-#         delete_profile_avatar(user=user)
+    Methods:
+        - get(request: HttpRequest, profile_type: str) -> HttpResponse: Method to handle GET requests for deleting user avatar.
+    """
 
-#         return redirect("accounts:profile")
+    login_url = 'accounts:login'
+
+    def get(self, request: HttpRequest, profile_type: str = 'freelancer') -> HttpResponse:
+        """
+        Handle GET requests for deleting user avatar.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+            profile_type (str): The type of profile (e.g., 'freelancer' or 'client').
+
+        Returns:
+            HttpResponse: The HTTP response after deleting the user avatar.
+        """
+        user = request.user
+        delete_profile_avatar(user=user, profile_type=profile_type)
+
+        return redirect('accounts:profile')

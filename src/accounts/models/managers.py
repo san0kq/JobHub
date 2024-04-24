@@ -9,19 +9,26 @@ if TYPE_CHECKING:
 
 
 class UserManager(BaseUserManager):
-    """
-    A custom manager is used to create
-    regular users and superusers.
-
-    It's utilized for the functionality of a custom user model.
-    """
+    """Custom manager for the custom user model."""
 
     def create_user(
         self, email: str, password: str, **extra_fields: Any
     ) -> AbstractBaseUser:
-        """Creates and saves a User with the given data."""
+        """Create and return a regular user with the given email and password.
+
+        Args:
+            email (str): The email address of the user.
+            password (str): The password for the user.
+            **extra_fields: Additional fields for the user model.
+
+        Returns:
+            AbstractBaseUser: The newly created user.
+
+        Raises:
+            ValueError: If the email is not provided.
+        """
         if not email:
-            raise ValueError("The Email must be set")
+            raise ValueError('The Email must be set')
         email = self.normalize_email(email)
         user: AbstractBaseUser = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -31,13 +38,25 @@ class UserManager(BaseUserManager):
     def create_superuser(
         self, email: str, password: str, **extra_fields: Any
     ) -> AbstractBaseUser:
-        """Creates and saves a superuser with the given data."""
-        extra_fields.setdefault("is_staff", True)
-        extra_fields.setdefault("is_superuser", True)
-        extra_fields.setdefault("is_active", True)
+        """Create and return a superuser with the given email and password.
 
-        if extra_fields.get("is_staff") is not True:
-            raise ValueError("Superuser must have is_staff=True.")
-        if extra_fields.get("is_superuser") is not True:
-            raise ValueError("Superuser must have is_superuser=True.")
+        Args:
+            email (str): The email address of the superuser.
+            password (str): The password for the superuser.
+            **extra_fields: Additional fields for the user model.
+
+        Returns:
+            AbstractBaseUser: The newly created superuser.
+
+        Raises:
+            ValueError: If is_staff or is_superuser fields are not set to True.
+        """
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
         return self.create_user(email, password, **extra_fields)

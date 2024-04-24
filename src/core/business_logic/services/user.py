@@ -22,6 +22,15 @@ logger = getLogger(__name__)
 
 
 def get_user_by_email(email: str) -> AbstractBaseUser | None:
+    """
+    Retrieve a user by email.
+
+    Args:
+        email (str): The email address of the user.
+
+    Returns:
+        AbstractBaseUser | None: The user object if found, else None.
+    """
     user_model = get_user_model()
     user = user_model.objects.filter(email=email).first()
 
@@ -29,6 +38,15 @@ def get_user_by_email(email: str) -> AbstractBaseUser | None:
 
 
 def get_user_by_email_or_username(email_or_username: str) -> AbstractBaseUser | None:
+    """
+    Retrieve a user by email or username.
+
+    Args:
+        email_or_username (str): The email address or username of the user.
+
+    Returns:
+        AbstractBaseUser | None: The user object if found, else None.
+    """
     user_model = get_user_model()
     user = user_model.objects.filter(Q(email=email_or_username) | Q(username=email_or_username)).first()
 
@@ -36,6 +54,16 @@ def get_user_by_email_or_username(email_or_username: str) -> AbstractBaseUser | 
 
 
 def is_user_not_exists(email: str, username: str):
+    """
+    Check if a user with given email or username doesn't exist.
+
+    Args:
+        email (str): The email address of the user.
+        username (str): The username of the user.
+
+    Returns:
+        bool: True if the user doesn't exist, False otherwise.
+    """
     user_model = get_user_model()
     if user_model.objects.filter(email=email, is_active=True).exists():
         logger.error('Email already exists', extra={'email': email})
@@ -50,6 +78,15 @@ def is_user_not_exists(email: str, username: str):
 
 
 def create_user(data: RegistrationDTO) -> AbstractBaseUser | None:
+    """
+    Create a new user.
+
+    Args:
+        data (RegistrationDTO): The registration data for the new user.
+
+    Returns:
+        dict[str, bool | int] | None: A dictionary indicating if the user was successfully created, else None.
+    """
     logger.info('Get user creation request', extra={'user': data})
 
     user_model: AbstractBaseUser = get_user_model()

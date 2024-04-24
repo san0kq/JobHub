@@ -25,11 +25,13 @@ class ProfileEditForm(forms.Form):
         max_length=13
     )
     avatar = forms.ImageField(
-        label="Avatar",
+        label='Avatar',
         allow_empty_file=False,
         validators=[
-            ValidateFileExtension(["jpg", "jpeg", "png"]),
+            ValidateFileExtension(['jpg', 'jpeg', 'png']),
             ValidateFileSize(5_000_000),
         ],
         required=False,
     )
+    telegram = forms.URLField(label='Telegram URL', required=False)
+    linkedin = forms.URLField(label='LinkedIn URL', required=False)

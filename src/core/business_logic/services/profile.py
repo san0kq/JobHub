@@ -3,14 +3,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from logging import getLogger
 
-from django.db.models import Prefetch
 from django.db import transaction
 
 if TYPE_CHECKING:
     from django.contrib.auth.models import AbstractBaseUser
+    from core.business_logic.dto import ProfileEditDTO
 
-from accounts.models import Freelancer, Client, SocialLink
-from core.business_logic.dto import ProfileEditDTO
+from accounts.models import Freelancer, Client
 from core.business_logic.services.common import (
     replace_file_name_to_uuid,
     change_file_size
@@ -19,30 +18,46 @@ from core.business_logic.services.common import (
 logger = getLogger(__name__)
 
 def get_freelancer_profile(user_id: int) -> Freelancer:
-    social_links_prefetch = Prefetch(
-        'social_links',
-        queryset=SocialLink.objects.select_related('platform')
-    )
-    profile = Freelancer.objects.select_related('user').prefetch_related(social_links_prefetch).filter(user__pk=user_id).first()
+    """
+    Retrieve the freelancer profile for the given user ID.
+
+    Args:
+        user_id (int): The ID of the user.
+
+    Returns:
+        Freelancer: The freelancer profile of the user.
+    """
+    profile = Freelancer.objects.select_related('user').filter(user__pk=user_id).first()
 
     return profile
 
 
 def get_client_profile(user_id: int) -> Freelancer:
-    social_links_prefetch = Prefetch(
-        'social_links',
-        queryset=SocialLink.objects.select_related('platform')
-    )
-    profile = Client.objects.select_related('user').prefetch_related(social_links_prefetch).filter(user__pk=user_id).first()
+    """
+    Retrieve the client profile for the given user ID.
+
+    Args:
+        user_id (int): The ID of the user.
+
+    Returns:
+        Client: The client profile of the user.
+    """
+    profile = Client.objects.select_related('user').filter(user__pk=user_id).first()
 
     return profile
 
 
 def initial_profile_form(user_id: int, profile_type: str = 'freelancer') -> dict[str, str]:
     """
-    Function to populate a form with existing user data when editing user information.
+    Get initial profile data for the profile edit form.
+
+    Args:
+        user_id (int): The ID of the user.
+        profile_type (str): The type of profile ('freelancer' or 'client'). Defaults to 'freelancer'.
+
+    Returns:
+        dict: Initial data for the profile edit form.
     """
-    
     if profile_type == 'freelancer':
         profile = get_freelancer_profile(user_id=user_id)
     else:
@@ -54,13 +69,29 @@ def initial_profile_form(user_id: int, profile_type: str = 'freelancer') -> dict
         'phone': profile.phone if profile else '',
         'email': profile.email if profile else '',
         'avatar': profile.avatar if profile else '',
+        'linkedin': profile.linkedin_link if profile else '',
+        'telegram': profile.telegram_link if profile else ''
     }
 
     return initial_data
 
 
-def profile_edit(data: ProfileEditDTO, user: AbstractBaseUser, profile_type: str = 'freelancer') -> bool:
+def profile_edit(
+        data: ProfileEditDTO,
+        user: AbstractBaseUser,
+        profile_type: str = 'freelancer'
+    ) -> bool:
+    """
+    Edit the user's profile.
 
+    Args:
+        data (ProfileEditDTO): The profile data to edit.
+        user (AbstractBaseUser): The user object.
+        profile_type (str): The type of profile ('freelancer' or 'client'). Defaults to 'freelancer'.
+
+    Returns:
+        None
+    """
     with transaction.atomic():
         if profile_type == 'freelancer':
             profile = Freelancer.objects.get_or_create(user=user)[0]
@@ -101,13 +132,38 @@ def profile_edit(data: ProfileEditDTO, user: AbstractBaseUser, profile_type: str
                 profile.avatar = data.avatar
             elif data.avatar is False:
                 profile.avatar = None
+        
+        if profile.telegram_link != data.telegram:
+            if profile.telegram_link:
+                logger_data['old_telegram'] = profile.telegram_link
+            logger_data['new_telegram'] = data.telegram
+            profile.telegram_link = data.telegram
+        
+        if profile.linkedin_link != data.linkedin:
+            if profile.linkedin_link:
+                logger_data['old_linkedin'] = profile.linkedin_link
+            logger_data['new_linkedin'] = data.linkedin
+            profile.linkedin_link = data.linkedin
 
         profile.save()
         logger.info('Profile edited', extra={'data': logger_data})
 
 
-# def delete_profile_avatar(user: AbstractBaseUser) -> None:
-#     profile = Profile.objects.get(user=user)
+def delete_profile_avatar(user: AbstractBaseUser, profile_type: str = 'freelancer') -> None:
+    """
+    Delete the avatar of the user's profile.
 
-#     profile.avatar = None
-#     profile.save()
+    Args:
+        user (AbstractBaseUser): The user object.
+        profile_type (str): The type of profile ('freelancer' or 'client'). Defaults to 'freelancer'.
+
+    Returns:
+        None
+    """
+    if profile_type == 'client':
+        profile = Client.objects.get(user=user)
+    else:
+        profile = Freelancer.objects.get(user=user)
+
+    profile.avatar = None
+    profile.save()

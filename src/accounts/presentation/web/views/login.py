@@ -22,22 +22,40 @@ logger = getLogger(__name__)
 
 class LoginView(View):
     """
-    Controller for user authentication.
+    View for handling user login.
 
-    Supports both GET and POST requests.
-
-    If the user is already authenticated, it redirects to the main page of the website.
+    Methods:
+        - get(request: HttpRequest) -> HttpResponse: Method to handle GET requests for displaying the login form.
+        - post(request: HttpRequest) -> HttpResponse: Method to handle POST requests for user login.
     """
 
     def get(self, request: HttpRequest) -> HttpResponse:
+        """
+        Handle GET requests for displaying the login form.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+
+        Returns:
+            HttpResponse: The HTTP response containing the login form.
+        """
         if request.user.is_authenticated:
-            return redirect("core:main")
+            return redirect('core:main')
 
         form = LoginForm()
-        context = {"form": form}
-        return render(request, "login.html", context=context)
+        context = {'form': form}
+        return render(request, 'login.html', context=context)
 
     def post(self, request: HttpRequest) -> HttpResponse:
+        """
+        Handle POST requests for user login.
+
+        Args:
+            request (HttpRequest): The HTTP request object containing user login data.
+
+        Returns:
+            HttpResponse: The HTTP response after processing the login attempt.
+        """
         form = LoginForm(request.POST)
 
         if form.is_valid():
@@ -49,16 +67,16 @@ class LoginView(View):
             except InvalidAuthCredentials as err:
                 user = get_user_by_email_or_username(email_or_username=data.email_or_username.lower())
                 if user and user.check_password(data.password) and not user.is_active:
-                    context = {"email": user.email}
-                    return render(request, "not_active_user.html", context=context)
+                    context = {'email': user.email}
+                    return render(request, 'not_active_user.html', context=context)
                 
                 error_message = err
-                context = {"form": form, "error_message": error_message}
-                return render(request, "login.html", context=context)
+                context = {'form': form, 'error_message': error_message}
+                return render(request, 'login.html', context=context)
 
             login(request=request, user=user)
-            return redirect("core:index")
+            return redirect('core:index')
 
         else:
-            context = {"form": form}
-            return render(request, "login.html", context=context)
+            context = {'form': form}
+            return render(request, 'login.html', context=context)

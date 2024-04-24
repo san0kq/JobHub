@@ -15,22 +15,31 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 
 def replace_file_name_to_uuid(file: File) -> File:
     """
-    Replacing the uploaded file's name
-    for users with a random UUID-based name.
+    Replace the file name with a UUID.
+
+    Args:
+        file (File): The file to rename.
+
+    Returns:
+        File: The file with the renamed UUID.
     """
-    file_extansion = file.name.split(".")[-1]
+    file_extansion = file.name.split('.')[-1]
     file_name = str(uuid.uuid4())
-    file.name = file_name + "." + file_extansion
+    file.name = file_name + '.' + file_extansion
     return file
 
 
 def change_file_size(file: InMemoryUploadedFile) -> InMemoryUploadedFile:
     """
-    Resizing an image to optimize storage.
+    Change the size of the image file.
 
-    Returns a file stored in memory.
+    Args:
+        file (InMemoryUploadedFile): The image file to resize.
+
+    Returns:
+        InMemoryUploadedFile: The resized image file.
     """
-    format = file.content_type.split("/")[-1].upper()
+    format = file.content_type.split('/')[-1].upper()
     output = BytesIO()
     with Image.open(file) as image:
         image.thumbnail(size=(200, 150))

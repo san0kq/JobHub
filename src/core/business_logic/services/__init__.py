@@ -10,7 +10,8 @@ from .profile import (
     get_client_profile,
     get_freelancer_profile,
     initial_profile_form,
-    profile_edit
+    profile_edit,
+    delete_profile_avatar
 )
 
 __all__ = [
@@ -24,5 +25,6 @@ __all__ = [
     'get_freelancer_profile',
     'get_client_profile',
     'initial_profile_form',
-    'profile_edit'
+    'profile_edit',
+    'delete_profile_avatar'
 ]

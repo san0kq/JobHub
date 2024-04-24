@@ -11,6 +11,7 @@ form {
     row-gap: 20px;
     align-items: center;
 }
+
 .form__field {
     display: flex;
     flex-direction: row;
